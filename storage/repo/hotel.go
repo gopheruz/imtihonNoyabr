@@ -4,6 +4,7 @@ type HotelRepo struct {
 	ID          int64
 	HotelName   string
 	HotelAdress string
+	Description string
 	Images      []*HotelImages
 }
 
@@ -28,5 +29,5 @@ type GetallHotelParams struct {
 }
 type GetallHotelResponse struct {
 	Hotels []*HotelRepo
-	Count int64
+	Count  int64
 }
