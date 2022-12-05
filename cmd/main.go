@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/bxcodec/faker/v4"
 	"github.com/go-redis/redis/v9"
 	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
@@ -33,31 +34,17 @@ func main() {
 	})
 	fmt.Println(rdb)
 	strg := storage.NewStoragePg(psqlConn)
-	data, err := strg.User().Create(&repo.UserRepo{
-		FirstName: "nurmuhammad",
-		LastName:  "noyabr",
-		Email:     "nurmuhammad@gmail.com",
-		Password:  "bilmaysan@admin",
-		ImageUrl:  "google.com",
+	fmt.Println(strg)
+	data, err := strg.User().Update(&repo.UserRepo{
+		ID: 3,
+		FirstName: faker.FirstName(),
+		LastName: faker.LastName(),
+		Email: faker.Email(),
+		ImageUrl: faker.URL(),
+		UserType: "user",
 	})
-	if err != nil {
-		log.Fatalf("failed to create user: %v", err)
+	if err != nil{
+		log.Fatalf("filed to update user %v", err)
 	}
 	fmt.Println(data)
-
-	many, err := strg.User().GetAll(
-		&repo.GetallUsersParams{
-			Limit:  10,
-			Page:   1,
-			Search: "nurmuhammad",
-			Sortby: "asc",
-		},
-	)
-	if err != nil {
-		log.Fatalf("failed to get all users: %v", err)
-	}
-	for _, user := range many.Users {
-		fmt.Println(user)
-	}
-	fmt.Println(many.Count)
 }

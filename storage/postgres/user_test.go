@@ -1,6 +1,8 @@
 package postgres_test
 
 import (
+	"fmt"
+	"log"
 	"testing"
 
 	"github.com/bxcodec/faker/v4"
@@ -37,11 +39,48 @@ func TestCreateUser(t *testing.T) {
 }
 func TestUpdateUser(t *testing.T) {
 	n := createUser(t)
-
 	n.FirstName = faker.FirstName()
 	n.LastName = faker.LastName()
 	n.Email = faker.Email()
 	User, err := strg.User().Update(n)
+	if err != nil{
+		panic(err)
+	}
+	fmt.Println(User)
+	_, err = strg.User().Create(&repo.UserRepo{
+		FirstName: faker.FirstName(),
+		LastName:  faker.LastName(),
+		Email:     faker.Email(),
+		UserType:  "superadmin",
+		Password:  faker.Password(),
+		ImageUrl:  faker.URL(),
+	})
+	if err != nil {
+		log.Fatalf("filed to create user: %v", err)
+	}
+	data, err := strg.User().Get(3)
+	if err != nil {
+		log.Fatalf("filed to get user %v", err)
+	}
+	fmt.Println(data)
+	data, err = strg.User().Create(&repo.UserRepo{
+		FirstName: faker.FirstName(),
+		LastName:  faker.LastName(),
+		Email:     faker.Email(),
+		UserType:  "superadmin",
+		Password:  faker.Password(),
+		ImageUrl:  faker.URL(),
+	})
+	if err != nil {
+		log.Fatalf("filed to create user: %v", err)
+	}
+	fmt.Println(data)
+
+	data, err = strg.User().Get(3)
+	if err != nil {
+		log.Fatalf("filed to get user %v", err)
+	}
+	fmt.Println(data)
 	require.NoError(t, err)
 	require.NotEmpty(t, User)
 	deleteUser(User.ID, t)

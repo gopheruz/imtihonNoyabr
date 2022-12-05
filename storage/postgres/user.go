@@ -23,7 +23,17 @@ func (usrdb *userRepo) Create(User *repo.UserRepo) (*repo.UserRepo, error) {
 	if err != nil {
 		return nil, err
 	}
-	rows := usrdb.db.QueryRow(querys.UserCreateQuery, User.FirstName, User.LastName, User.Email, hashedpw, User.ImageUrl)
+	if User.UserType == "" {
+		User.UserType = "user"
+	}
+	rows := usrdb.db.QueryRow(querys.UserCreateQuery,
+		User.FirstName,
+		User.LastName,
+		User.Email,
+		hashedpw,
+		User.UserType,
+		User.ImageUrl,
+	)
 	err = rows.Scan(
 		&User.ID,
 		&User.CreatedAt,
@@ -41,6 +51,7 @@ func (usrdb *userRepo) Get(id int64) (*repo.UserRepo, error) {
 		&GettedUser.LastName,
 		&GettedUser.Email,
 		&GettedUser.ImageUrl,
+		&GettedUser.UserType,
 		&GettedUser.CreatedAt,
 	)
 	if err != nil {
@@ -78,6 +89,7 @@ func (usrdb *userRepo) GetAll(params *repo.GetallUsersParams) (*repo.GetallUsers
 			&GettedUser.Email,
 			&GettedUser.Password,
 			&GettedUser.ImageUrl,
+			&GettedUser.UserType,
 			&GettedUser.CreatedAt,
 		)
 		if err != nil {
@@ -99,6 +111,7 @@ func (usrdb *userRepo) Update(User *repo.UserRepo) (*repo.UserRepo, error) {
 		User.LastName,
 		User.Email,
 		User.ImageUrl,
+		User.UserType,
 		time.Now(),
 		User.ID,
 	)

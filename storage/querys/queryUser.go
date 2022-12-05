@@ -6,9 +6,10 @@ INSERT INTO users(
 	last_name,
 	email,
 	password,
+	user_type,
 	image_url
 )
-VALUES($1, $2, $3, $4, $5)
+VALUES($1, $2, $3, $4, $5, $6)
 RETURNING id,  created_at
 `
 
@@ -18,6 +19,7 @@ var UseGetQuery string = `
 			last_name,
             email,
 			image_url,
+			user_type,
 			created_at
 		From users WHERE id = $1 and deleted_at is null
 `
@@ -28,8 +30,9 @@ var UserUpdateQuey = `
 			last_name=$2,
 			email=$3,
 			image_url=$4,
-			updated_at=$5
-		where id=$6
+			user_type=$5,
+			updated_at=$6
+		where id=$7
 		returning updated_at
 	`
 
@@ -47,6 +50,7 @@ var GetAllUserQuery string = `
 			email,
 			password,
 			image_url,
+			user_type,
 			created_at
 		FROM users 
 `
